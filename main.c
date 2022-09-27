@@ -54,10 +54,26 @@ void listarLivros(Livro *livro[], int numLivros){
     printf("\n\n");
 }
 
+void listarLivrosDeAutores(Autor *autor){
+    printf("id     titulo         ano de publicacao         ISBN\n");
+    for (int i = 0; i < autor->numLivros; i++){
+        printf("%d  -   %s          %d         %s\n", autor->livro[i]->id, autor->livro[i]->titulo, autor->livro[i]->anoDePublicacao, autor->livro[i]->ISBN);
+    }
+    printf("\n\n");
+}
+
 void listarPersonagens(Personagem *personagem[], int numPersonagens){
     printf("id     nome         descricao\n");
     for (int i = 0; i < numPersonagens; i++){
         printf("%d  -   %s          %s \n", personagem[i]->id, personagem[i]->nome, personagem[i]->descricao);
+    }
+    printf("\n\n");
+}
+
+void listarPersonagensdeLivros(Livro *livro){
+    printf("id     nome         descricao\n");
+    for (int i = 0; i < livro->numPersonagens; i++){
+        printf("%d  -   %s          %s \n", livro->personagem[i]->id, livro->personagem[i]->nome, livro->personagem[i]->descricao);
     }
     printf("\n\n");
 }
@@ -98,9 +114,9 @@ void addPersonagem(Personagem *personagem[], int numPersonagens){
     printf("\n personagem adicionado com sucesso\n");
 }
 
-int main()
-{
-    int c = 0, op = 0, numAutores = 0, numLivros = 0, numPersonagens = 0;
+int main(){
+    int c = 0, op = 0, op2, numAutores = 0, numLivros = 0, numPersonagens = 0, listIdAutor, listIdLivro;
+    int autorOP, livroOP, personagemOP;
     Autor *autor[20];
     Livro *livro[20];
     Personagem *personagem[20];
@@ -118,17 +134,44 @@ int main()
         break;
         
         case 2://Adicionar autores   FUNCIONANDO
+            
             addAutor(autor, numAutores);
             numAutores++;
         break;
 
         case 3://Exibir livros   FUNCIONANDO
-            if (numLivros <= 0){
-            printf("Nenhum livro foi adicionado\n");
-           }
-           else{
-            listarLivros(livro, numLivros);
-           }
+            printf("1 - exibir todos os livros\n");
+            printf("2 - exibir livros de um autor especifico\n");
+            scanf("%d", &op2);
+            switch(op2){
+            case 1://exibir todos os livros
+                if (numLivros <= 0){
+                printf("Nenhum livro foi adicionado\n");
+                }
+                else{
+                listarLivros(livro, numLivros);
+                }
+            break;
+            case 2: // exibir livros de um autor especifico
+                if (numAutores <= 0){
+                   printf("Nenhum autor foi adicionado\n");
+                   break;
+                }
+                else{
+                   listarAutores(autor, numAutores);
+                }
+                printf("\n\n");
+                printf("Digite o id do autor:");
+                scanf("%d", &listIdAutor);
+                
+                if (autor[listIdAutor]->numLivros <= 0){
+                printf("O Autor não possui nenhum livro adicionado\n");
+                }
+                else{
+                listarLivrosDeAutores(autor[listIdAutor]);
+                }
+            break;
+            }
         break;
 
         case 4://adicionar Livros  FUNCIONANDO
@@ -138,12 +181,40 @@ int main()
         break;
 
         case 5://Exibir personagens FUNCIONANDO
-            if (numPersonagens <= 0){
-            printf("Nenhum personagem foi adicionado\n");
-           }
-           else{
-            listarPersonagens(personagem, numPersonagens);
-           }
+            printf("1 - exibir todos os personagens\n");
+            printf("2 - exibir personagens de um livro especifico\n");
+            scanf("%d", &op2);
+            switch(op2){
+                case 1: // exibir todos os personagens
+                    if (numPersonagens <= 0){
+                        printf("Nenhum personagem foi adicionado\n");
+                    }
+                    else{
+                        listarLivros(livro, numLivros);
+                    }
+                break;
+
+                case 2:// exibir personagens de um livro especifico
+                    if (numLivros <= 0){
+                        printf("Nenhum livro foi adicionado\n");
+                        break;
+                    }
+                    else{
+                       listarLivros(livro, numLivros);
+                    }
+                    printf("\n\n");
+                    printf("Digite o id do livro\n");
+                    scanf("%d", &listIdLivro);
+                    if (livro[listIdLivro]->numPersonagens <= 0){
+                        printf("O livro não possui nenhum personagem adicionado\n");
+                    }
+                    else{
+                        listarPersonagensdeLivros(livro[listIdLivro]);
+                    }
+
+                break;
+            }
+            
         break;
 
         case 6://Adicionar Personagens FUNCIONANDO
@@ -152,19 +223,27 @@ int main()
         break;
 
         case 7://relacionar livro com autor
-            int autorOP, livroOP;
             listarAutores(autor, numAutores);
-            printf("\ndigite o id do autor que voce deseja relacionar um livro");
-            scanf("%d", autorOP);
+            printf("\ndigite o id do autor que voce deseja relacionar um livro\n");
+            scanf("%d", &autorOP);
             listarLivros(livro, numLivros);
             printf("\nDigite o id do livro do autor: ");
-            scanf("%d", livroOP);
+            scanf("%d", &livroOP);
             autor[autorOP]->livro[autor[autorOP]->numLivros] = livro[livroOP];
             autor[autorOP]->numLivros++;
+            printf("livro relacionado com sucesso\n");
         break;
 
         case 8://relacionar personagem com livro
-        
+            listarLivros(livro, numLivros);
+            printf("\nDigite o id do livro que voce deseja relacionar um personagem: ");
+            scanf("%d", &livroOP);
+            listarPersonagens(personagem, numPersonagens);
+            printf("digite o id do personagem do livro: ");
+            scanf("%d", &personagemOP);
+            livro[livroOP]->personagem[livro[livroOP]->numPersonagens] = personagem[personagemOP];
+            livro[livroOP]->numPersonagens++;
+            printf("personagem relacionado com sucesso\n");
         break;
 
         case 9:
@@ -173,7 +252,8 @@ int main()
 
         default:
         printf("Opção invalida\n");
+            
         }
     }
-    return 0;
+return 0;
 }
